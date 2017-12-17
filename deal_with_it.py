@@ -30,8 +30,7 @@ def deal_with_it(eyes_cascade, face_cascade, glasses_img):
     glasses_mask     = glasses_img[:, :, 3] # makes mask based on the alpha channel
     glasses_mask_inv = cv2.bitwise_not(glasses_mask) # inverts original mask
 
-    # glasses_img = glasses_img[:, :, 0:3]    
-    # orig_glasses_height, orig_glasses_width = glasses_img.shape[:2] # obtains dimentions
+    glasses_img = glasses_img[:, :, 0:3]    
 
     while (True):
         
@@ -41,7 +40,7 @@ def deal_with_it(eyes_cascade, face_cascade, glasses_img):
         # convert image to grayscale (the classifier has been trained on grayscale images)
         gray  = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-        # detectes faces within given frame saves them to a list
+        # detectes faces within given frame and saves them to a list
         faces = face_cascade.detectMultiScale(gray, scaleFactor=1.3, minNeighbors=2, minSize=(15, 25), flags=cv2.CASCADE_SCALE_IMAGE)
         
         for (x, y, w, h) in faces:
