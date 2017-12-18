@@ -3,7 +3,7 @@ import cv2 # import OpenCV
 # import classifiers and image of sunglasses to be used
 eye     = cv2.CascadeClassifier("haarcascades/haarcascade_eye.xml")
 face    = cv2.CascadeClassifier("haarcascades/haarcascade_frontalface_alt.xml")
-image   = cv2.imread("glasses.png", cv2.IMREAD_UNCHANGED)  # "...UNCHANGED" includes the alpha channel
+image   = cv2.imread("glasses.png", cv2.IMREAD_UNCHANGED)  # second parameter includes the alpha channel
 capture = cv2.VideoCapture(0) # selects video source
 
 def adjust_glasses(h, eyes_w, eyes_h):
@@ -30,7 +30,7 @@ def deal_with_it(eyes_cascade, face_cascade, glasses_img):
     glasses_mask     = cv2.split(glasses_img)[3]     # makes mask based on the alpha channel
     glasses_mask_inv = cv2.bitwise_not(glasses_mask) # inverts original mask
 
-    # converts image into different colorspace since cv2's functions operate under the assumption that images are BGR
+    # converts image into BGR colorspace
     glasses_img = cv2.cvtColor(glasses_img, cv2.COLOR_RGB2BGR)   
 
     while (True):
