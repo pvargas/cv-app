@@ -30,8 +30,8 @@ def deal_with_it(eyes_cascade, face_cascade, glasses_img):
     glasses_mask     = cv2.split(glasses_img)[3]     # makes mask based on the alpha channel
     glasses_mask_inv = cv2.bitwise_not(glasses_mask) # inverts original mask
 
-    # converts image into BGR colorspace
-    glasses_img = cv2.cvtColor(glasses_img, cv2.COLOR_RGB2BGR)   
+    # Strips alpha channel from glasses
+    glasses_img = cv2.cvtColor(glasses_img, cv2.COLOR_RGBA2RGB)   
 
     while (True):
         
