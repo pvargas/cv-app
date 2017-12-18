@@ -66,7 +66,7 @@ def deal_with_it(eyes_cascade, face_cascade, glasses_img):
                 # selects mask's area from video
                 roi = face_region_color[v1:v2, u1:u2]
     
-                # applys masks
+                # applies masks
                 foreround  = cv2.bitwise_and(glasses, glasses, mask = mask)
                 background = cv2.bitwise_and(roi, roi, mask = mask_inv)
     
