@@ -27,7 +27,7 @@ def deal_with_it(eyes_cascade, face_cascade, glasses_img):
     ''' function detects faces and places the classic meme sunglasses on the detected face(s)! '''
 
     # creates mask
-    glasses_mask     = cv2.split(glasses_img)[3]     # makes mask based on the alpha channel
+    glasses_mask     = cv2.split(glasses_img)[3]     # extracts alpha channel to be used as mask
     glasses_mask_inv = cv2.bitwise_not(glasses_mask) # inverts original mask
 
     # Strips alpha channel from glasses
