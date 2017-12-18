@@ -42,7 +42,8 @@ def deal_with_it(eyes_cascade, face_cascade, glasses_img):
         grayscale  = cv2.cvtColor(video, cv2.COLOR_BGR2GRAY)
 
         # detectes faces within given frame and saves them to a list
-        faces = face_cascade.detectMultiScale(grayscale, scaleFactor=1.3, minNeighbors=2, minSize=(15, 25), flags=cv2.CASCADE_SCALE_IMAGE)
+        faces = face_cascade.detectMultiScale(grayscale, scaleFactor=1.3, minNeighbors=2, 
+        minSize=(15, 25), flags=cv2.CASCADE_SCALE_IMAGE)
         
         for (x, y, w, h) in faces:
 
