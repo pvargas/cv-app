@@ -58,7 +58,7 @@ def deal_with_it(eyes_cascade, face_cascade, glasses_img):
                 mask     = cv2.resize(glasses_mask,     (u2 - u1, v2 - v1))
                 mask_inv = cv2.resize(glasses_mask_inv, (u2 - u1, v2 - v1))
     
-                # selects mask's area from within the face region
+                # selects area to mask from within the face region
                 roi = face_region[v1:v2, u1:u2]
     
                 # applies masks
@@ -73,7 +73,7 @@ def deal_with_it(eyes_cascade, face_cascade, glasses_img):
         # displays video in a new window
         cv2.imshow("Sunglass-o-matic", video)
     
-        # The Escape key has to be pressed to exit the window
+        # The Escape key must be pressed to close the window
         if cv2.waitKey(1) == 27:
             break  
     
