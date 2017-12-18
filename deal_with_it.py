@@ -3,8 +3,8 @@ import cv2 # import OpenCV
 # import classifiers and image of sunglasses to be used
 eye     = cv2.CascadeClassifier("haarcascades/haarcascade_eye.xml")
 face    = cv2.CascadeClassifier("haarcascades/haarcascade_frontalface_alt.xml")
-image   = cv2.imread("glasses.png", -1)  # -1 includes the alpha channel
-capture = cv2.VideoCapture(0) #selects video source
+image   = cv2.imread("glasses.png", cv2.IMREAD_UNCHANGED)  # "...UNCHANGED" includes the alpha channel
+capture = cv2.VideoCapture(0) # selects video source
 
 def adjust_glasses(h, eyes_w, eyes_h):
     ''' helper function that computes values to scale/translate glasses '''
@@ -27,7 +27,7 @@ def deal_with_it(eyes_cascade, face_cascade, glasses_img):
     ''' function detects faces and places the classic meme sunglasses on the detected face(s)! '''
 
     # creates mask
-    glasses_mask     = glasses_img[:, :, 3] # makes mask based on the alpha channel
+    glasses_mask     = cv2.split(glasses_img)[3]     # makes mask based on the alpha channel
     glasses_mask_inv = cv2.bitwise_not(glasses_mask) # inverts original mask
 
     # converts image into different colorspace since cv2's functions operate under the assumption that images are BGR
@@ -47,7 +47,7 @@ def deal_with_it(eyes_cascade, face_cascade, glasses_img):
         
         for (x, y, w, h) in faces:
 
-            #extract window/kernel of face region in both greyscale and color versions
+            # extract window/kernel of face region in both greyscale and color versions
             face_region_color = video[y:y+h, x:x+w]
             face_region_gs    = grayscale[y:y+h,  x:x+w]
 
