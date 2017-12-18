@@ -36,23 +36,18 @@ def deal_with_it(eyes_cascade, face_cascade, glasses_img):
     while (True):
         
         img   = capture.read()[1] # Capture webcam's video feed
-        video = cv2.flip(img, 1)  # Flips image horizontally to compensate for webcam's mirrored image  
-    
-        # convert image to grayscale (the classifier has been trained on grayscale images)
-        grayscale  = cv2.cvtColor(video, cv2.COLOR_BGR2GRAY)
+        video = cv2.flip(img, 1)  # Flips image horizontally to compensate for webcam's mirrored image
 
         # detectes faces within given frame and saves them to a list
-        faces = face_cascade.detectMultiScale(grayscale, scaleFactor=1.3, minNeighbors=2, 
-        minSize=(15, 25), flags=cv2.CASCADE_SCALE_IMAGE)
+        faces = face_cascade.detectMultiScale(video)
         
         for (x, y, w, h) in faces:
 
-            # extract window/kernel of face region in both greyscale and color versions
-            face_region_color = video[y:y+h, x:x+w]
-            face_region_gs    = grayscale[y:y+h,  x:x+w]
+            # extract window/kernel of face region
+            face_region = video[y:y+h, x:x+w]
 
             # detectes eyes within each face and saves them to a list
-            eyes = eyes_cascade.detectMultiScale(face_region_gs)
+            eyes = eyes_cascade.detectMultiScale(face_region)
     
             for (_, _, eyes_w, eyes_h) in eyes:
 
@@ -63,15 +58,15 @@ def deal_with_it(eyes_cascade, face_cascade, glasses_img):
                 mask     = cv2.resize(glasses_mask,     (u2 - u1, v2 - v1))
                 mask_inv = cv2.resize(glasses_mask_inv, (u2 - u1, v2 - v1))
     
-                # selects mask's area from video
-                roi = face_region_color[v1:v2, u1:u2]
+                # selects mask's area from within the face region
+                roi = face_region[v1:v2, u1:u2]
     
                 # applies masks
                 foreround  = cv2.bitwise_and(glasses, glasses, mask = mask)
                 background = cv2.bitwise_and(roi, roi, mask = mask_inv)
     
                 # combines fg and bg of the eyes/glasses region by adding them              
-                face_region_color[v1:v2, u1:u2] = cv2.add(foreround, background) 
+                face_region[v1:v2, u1:u2] = cv2.add(foreround, background) 
 
                 break
     
