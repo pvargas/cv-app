@@ -1,6 +1,6 @@
 import cv2
 
-# import classifiers and glasses image to be used
+# import classifiers and image of sunglasses to be used
 eye     = cv2.CascadeClassifier("haarcascades/haarcascade_eye.xml")
 face    = cv2.CascadeClassifier("haarcascades/haarcascade_frontalface_alt.xml")
 image   = cv2.imread("glasses.png", -1)  # -1 includes the alpha channel
@@ -26,30 +26,32 @@ def adjust_glasses(h, eyes_w, eyes_h):
 def deal_with_it(eyes_cascade, face_cascade, glasses_img):
     ''' function detects faces and places the classic meme sunglasses on the detected face(s)! '''
 
-    #creates mask
+    # creates mask
     glasses_mask     = glasses_img[:, :, 3] # makes mask based on the alpha channel
     glasses_mask_inv = cv2.bitwise_not(glasses_mask) # inverts original mask
 
-    glasses_img = glasses_img[:, :, 0:3]    
+    # converts image into different colorspace since cv2's functions operate under the assumption that images are BGR
+    glasses_img = cv2.cvtColor(glasses_img, cv2.COLOR_RGB2BGR)   
 
     while (True):
         
         img   = capture.read()[1] # Capture webcam's video feed
-        frame = cv2.flip(img, 1)  # Flips image horizontally to compensate for webcam's mirrored image  
+        video = cv2.flip(img, 1)  # Flips image horizontally to compensate for webcam's mirrored image  
     
         # convert image to grayscale (the classifier has been trained on grayscale images)
-        gray  = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        grayscale  = cv2.cvtColor(video, cv2.COLOR_BGR2GRAY)
 
         # detectes faces within given frame and saves them to a list
-        faces = face_cascade.detectMultiScale(gray, scaleFactor=1.3, minNeighbors=2, minSize=(15, 25), flags=cv2.CASCADE_SCALE_IMAGE)
+        faces = face_cascade.detectMultiScale(grayscale, scaleFactor=1.3, minNeighbors=2, minSize=(15, 25), flags=cv2.CASCADE_SCALE_IMAGE)
         
         for (x, y, w, h) in faces:
 
-            color      = frame[y:y+h, x:x+w]
-            grayscale  = gray[y:y+h,  x:x+w]
+            #extract window/kernel of face region in both greyscale and color versions
+            face_region_color = video[y:y+h, x:x+w]
+            face_region_gs    = grayscale[y:y+h,  x:x+w]
 
             # detectes eyes within each face and saves them to a list
-            eyes = eyes_cascade.detectMultiScale(grayscale)
+            eyes = eyes_cascade.detectMultiScale(face_region_gs)
     
             for (_, _, eyes_w, eyes_h) in eyes:
 
@@ -60,20 +62,20 @@ def deal_with_it(eyes_cascade, face_cascade, glasses_img):
                 mask     = cv2.resize(glasses_mask,     (u2 - u1, v2 - v1))
                 mask_inv = cv2.resize(glasses_mask_inv, (u2 - u1, v2 - v1))
     
-                # selects mask's area from video frame
-                roi = color[v1:v2, u1:u2]
+                # selects mask's area from video
+                roi = face_region_color[v1:v2, u1:u2]
     
                 # applys masks
                 foreround  = cv2.bitwise_and(glasses, glasses, mask = mask)
                 background = cv2.bitwise_and(roi, roi, mask = mask_inv)
     
                 # combines fg and bg of the eyes/glasses region by adding them              
-                color[v1:v2, u1:u2] = cv2.add(foreround, background) 
+                face_region_color[v1:v2, u1:u2] = cv2.add(foreround, background) 
 
                 break
     
         # displays video in a new window
-        cv2.imshow("Sunglass-o-matic", frame)
+        cv2.imshow("Sunglass-o-matic", video)
     
         # The Escape key has to be pressed to exit the window
         if cv2.waitKey(1) == 27:
