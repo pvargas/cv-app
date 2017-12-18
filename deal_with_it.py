@@ -1,4 +1,4 @@
-import cv2
+import cv2 # import OpenCV
 
 # import classifiers and image of sunglasses to be used
 eye     = cv2.CascadeClassifier("haarcascades/haarcascade_eye.xml")
